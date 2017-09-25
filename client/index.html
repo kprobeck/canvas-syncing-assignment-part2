@@ -2,12 +2,66 @@
 <html lang="en">
 <head>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/babel" >
         "use strict";
+
+        let socket;
+        let canvas;
+        let ctx;
+        let draws = [];
+
+        const init = () => {
+          
+          canvas = document.querySelector("#mainCanvas");
+		  ctx = canvas.getContext('2d');
+          
+          socket = io.connect();
+          
+          setupSocket();
+        };
+        
+        window.onload = init;
+
+        const setupSocket = () => {
+          
+          socket.emit('join', {'joined': true});
+          
+          socket.on('initialData', (data) => {
+            console.log(draws);
+            draws = data.drawData;
+            console.log(draws);
+          });
+          
+          socket.on('addToDraw', (data) => {
+            draws[data.time] = data.coords;
+            draw();
+          });
+        };
+
+        
+
+        const draw = () => {
+          console.log(`trying to draw...`);
+          console.log(draws);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          let keysOfDraws = Object.keys(draws);
+          
+          ctx.fillStyle = 'black';
+          
+          for(let i = 0; i < keysOfDraws.length; i++) {
+            const drawCall = draws[keysOfDraws[i]];
+            ctx.fillRect(drawCall.x, drawCall.y, drawCall.width, drawCall.height);
+            ctx.fillStyle = 'red';
+          }
+        };
     
     </script>
 </head>
 <body>
-
+  <canvas id="mainCanvas" width="700" height="500">
+	Cannot create canvas element...
+	</canvas>
 </body>
 </html>
