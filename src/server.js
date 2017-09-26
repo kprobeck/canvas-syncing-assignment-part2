@@ -19,7 +19,7 @@ console.log(`Listening on 127.0.0.1 ${port}`);
 // pass in the http server into socketio and grab websocket as io
 const io = socketio(app);
 
-const draws = [{ x: 0, y: 0, width: 100, height: 100 }];
+const draws = {};
 
 // function to generate a new square when a new user joins
 const generateSquare = () => {
